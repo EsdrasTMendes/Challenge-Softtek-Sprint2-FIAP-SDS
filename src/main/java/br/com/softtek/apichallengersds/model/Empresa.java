@@ -15,4 +15,5 @@ public class Empresa {
     private List<String> setores;
     private Date criadoEm;
     private Lgpd lgpd;
+    private String registrationLink;
 }

@@ -9,9 +9,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Usuario {
     @Id
     private String id;
-
     private String empresaId;
     private String usuarioAnonimoId;
     private Avatar avatar;
     private Meta meta;
+    private String userAuthId;
 }

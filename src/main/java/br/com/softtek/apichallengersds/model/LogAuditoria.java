@@ -14,6 +14,6 @@ public class LogAuditoria {
 
     private String empresaId;
     private String acao;
-    private Map<String, Object> detalhes; // Objeto genérico
+    private Map<String, Object> detalhes;
     private Date criadoEm;
 }
