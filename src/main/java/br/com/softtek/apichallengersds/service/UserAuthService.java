@@ -12,6 +12,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import br.com.softtek.apichallengersds.dto.RegistroDTO;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import br.com.softtek.apichallengersds.model.Meta;
+import br.com.softtek.apichallengersds.model.Usuario;
+import java.util.Date;
+import java.util.UUID;
 import br.com.softtek.apichallengersds.repository.UsuarioRepository;
 
 import java.util.List;
@@ -23,6 +27,9 @@ public class UserAuthService implements UserDetailsService {
 
     @Autowired
     private UserAuthRepository userAuthRepository;
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
 
     @Autowired
     private EmpresaRepository empresaRepository;
@@ -52,9 +59,21 @@ public class UserAuthService implements UserDetailsService {
     public void registerNewUser(RegistroDTO registroDTO, String empresaId) {
         empresaRepository.findByEmpresaId(empresaId)
                 .orElseThrow(() -> new RuntimeException("Empresa não encontrada"));
-        createUser(registroDTO.username(), registroDTO.password(), empresaId, List.of("ROLE_EMPLOYEE"));
-    }
 
+        UserAuth savedUserAuth = createUser(registroDTO.username(), registroDTO.password(), empresaId, List.of("ROLE_EMPLOYEE"));
+
+        Usuario newUsuario = new Usuario();
+        newUsuario.setEmpresaId(empresaId);
+        newUsuario.setUsuarioAnonimoId("user_" + UUID.randomUUID().toString());
+
+        newUsuario.setUserAuthId(savedUserAuth.getId());
+
+        Meta meta = new Meta();
+        meta.setCriadoEm(new Date());
+        newUsuario.setMeta(meta);
+
+        usuarioRepository.save(newUsuario);
+    }
     public void createCompanyAdmin(AdminCreateDTO adminCreateDTO, String targetEmpresaId, Authentication authentication) {
         UserAuth requesterAdmin = (UserAuth) authentication.getPrincipal();
 
