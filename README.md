@@ -185,3 +185,49 @@ A API utiliza um fluxo de autenticação Bearer Token com JWT e um sistema de pe
 -   [ ] Adicionar gestão de status (Ativar/Inativar) para usuários.
 -   [ ] Criar um fluxo de "Esqueci minha senha" com envio de token por e-mail.
 -   [ ] Implementar endpoints para que os `COMPANY_ADMIN` possam consultar os dados agregados e anônimos de seus colaboradores.
+
+
+## 📌 Auditoria de Eventos
+
+Criado mecanismo para **logar eventos importantes** (submissões de avaliações, edições de dados e alertas).
+
+### Endpoints
+
+- `POST /logs` (ROLE_PLATFORM_ADMIN e ROLE_COMPANY_ADMIN)  
+  Cria um log de auditoria.
+  ```json
+  {
+    "empresaId": "e_001",
+    "acao": "SUBMISSAO_AVALIACAO",
+    "detalhes": {
+      "questionarioId": "qs_123",
+      "usuario": "jane.doe",
+      "nota": 4
+    }
+  }
+  ```
+
+- `GET /logs?empresaId=e_001&acao=SUBMISSAO_AVALIACAO` (ROLE_PLATFORM_ADMIN e ROLE_COMPANY_ADMIN)  
+  Lista os logs com filtros opcionais.
+
+### Sugestões de valores para `acao`
+- `SUBMISSAO_AVALIACAO`
+- `EDICAO_DADOS`
+- `ALERTA`
+
+Os registros são persistidos na coleção MongoDB **`logs_auditoria`** (modelo `LogAuditoria`).
+
+### Como chamar (exemplo curl)
+
+```bash
+# Criar log
+curl -X POST http://localhost:8080/logs \
+  -H "Content-Type: application/json" \  -H "Authorization: Bearer <TOKEN>" \  -d '{
+    "empresaId":"e_001",
+    "acao":"ALERTA",
+    "detalhes":{"tipo":"risco_ia","gravidade":"ALTA","descricao":"Uso inadequado de prompt"}
+  }'
+
+# Listar logs
+curl -H "Authorization: Bearer <TOKEN>" "http://localhost:8080/logs?empresaId=e_001&acao=ALERTA"
+```
