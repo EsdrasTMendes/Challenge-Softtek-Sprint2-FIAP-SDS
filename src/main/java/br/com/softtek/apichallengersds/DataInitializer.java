@@ -46,9 +46,6 @@ public class DataInitializer implements CommandLineRunner {
             System.out.println(">> Modelo de Questionário Semanal criado com sucesso!");
         }
 
-
-
-
         var adminUsername = "platform.admin@softtex.com";
         if(UserAuthRepository.findByUsername(adminUsername).isEmpty()){
             UserAuth platformAdmin = new UserAuth();
@@ -56,7 +53,6 @@ public class DataInitializer implements CommandLineRunner {
             platformAdmin.setPassword(passwordEncoder.encode("SofttekAdminSenhaForte123!"));
 
             platformAdmin.setRoles(List.of("ROLE_PLATFORM_ADMIN"));
-
 
             UserAuthRepository.save(platformAdmin);
             System.out.println(">>> Usuário PLATFORM_ADMIN' criado com sucesso!");
